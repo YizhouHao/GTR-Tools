@@ -1,3 +1,5 @@
+This repository contains my implementations of various algorithms related to the [Generalized Time-Reversible (GTR) model](https://en.wikipedia.org/wiki/Models_of_DNA_evolution#GTR:_Generalised_time-reversible_.28Tavar.C3.A9_1986.29.5B9.5D).
+
 * **generateSeq.py**: Generate sequences on a phylogenetic tree using the GTR model
     * This program performs a preorder traversal on the input tree and uses the GTR model to simulate sequences down the tree
     * Usage: `generateSeq.py [-h] -t TREE -p GTRPARAMS [-i ROOTSEQ] [-r ROOTSEQLEN] -o OUT`
