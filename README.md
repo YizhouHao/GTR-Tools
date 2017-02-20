@@ -1,6 +1,6 @@
 This repository contains my implementations of various algorithms related to the [Generalized Time-Reversible (GTR) model](https://en.wikipedia.org/wiki/Models_of_DNA_evolution#GTR:_Generalised_time-reversible_.28Tavar.C3.A9_1986.29.5B9.5D).
 
-* **generateSeq.py: Generate sequences on a phylogenetic tree using the GTR model**
+* **[generateSeq](generateSeq.py): Generate sequences on a phylogenetic tree using the GTR model**
     * This program performs a preorder traversal on the input tree and uses the GTR model to simulate sequences down the tree
     * Usage: `generateSeq.py [-h] -t TREE -p GTRPARAMS [-i ROOTSEQ] [-r ROOTSEQLEN] -o OUT`
         * `-h`: Show help message
@@ -11,7 +11,7 @@ This repository contains my implementations of various algorithms related to the
             * If both `-i ROOTSEQ` and `-r ROOTSEQLEN` are specified, `-i ROOTSEQ` will have preference (i.e., `-r ROOTSEQLEN` will be ignored)
         * `-o OUT`: Specify `OUT` to be the output file
             * Note that the file `OUT` will be overwritten if it already exists
-* **estimateGTRPairs.py: Estimate GTR parameters from pairs of DNA sequences**
+* **[estimateGTRPairs](estimateGTRPairs.py): Estimate GTR parameters from pairs of DNA sequences**
     * Given a pair of DNA sequences and their distance, this program uses the "Sequential Least Squares Programming" (SLSQP) method to estimate maximum-likelihood GTR parameters
     * Usage: `estimateGTRPairs.py [-h] -f BRANCHLENGTH -d SEQS -o OUT`
         * `-h`: Show help message
@@ -19,7 +19,7 @@ This repository contains my implementations of various algorithms related to the
         * `-d SEQS`: Specify `SEQS` (a FASTA file) to be the pair of sequences from which to estimate GTR parameters
         * `-o OUT`: Specify `OUT` to be the output file
             * Note that the file `OUT` will be overwritten if it already exists
-* **computeML.py: Compute the likelihood of a tree given GTR parameters**
+* **[computeML](computeML.py): Compute the likelihood of a tree given GTR parameters**
     * Given a phylogenetic tree, sequences, and GTR parameters, this program uses the Felsenstein tree-pruning algorithm to compute the likelihood of the tree
     * Usage: `computeML.py [-h] -t TREE -p GTRPARAMS -d SEQS -o OUT`
         * `-h`: Show help message
@@ -28,7 +28,7 @@ This repository contains my implementations of various algorithms related to the
         * `-d SEQS`: Specify `SEQS` (a FASTA file) to be the set of sequences for the leaves of `TREE`
         * `-o OUT`: Specify `OUT` to be the output file
             * Note that the file `OUT` will be overwritten if it already exists
-* **estimateGTR.py: Estimate GTR parameters on multiple DNA sequences**
+* **[estimateGTR](estimateGTR.py): Estimate GTR parameters on multiple DNA sequences**
     * Given a phylogenetic tree and sequences, this program uses the Felsenstein tree-pruning algorithm and the "Sequential Least Squares Programming" (SLSQP) method to estimate maximum-likelihood GTR parameters
     * Usage: `estimateGTR.py [-h] -t TREE -d SEQS [-i MAXIT] -o OUT`
         * `-h`: Show help message
