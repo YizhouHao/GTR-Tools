@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Estimate GTR parameters on multiple DNA sequences
 '''
 import argparse, dendropy
-from common import parseFASTA,gtr2matrix,L
+from common import parseFASTA,gtr2matrix,normalizeGTR,L
 from scipy.optimize import minimize
 import warnings
 warnings.filterwarnings('ignore')
@@ -19,7 +19,7 @@ def parseArgs():
     parser.add_argument('-i', '--maxit', required=False, type=int, default=None, help="Maximum number of optimization iterations")
     parser.add_argument('-o', '--out', required=True, type=argparse.FileType('w'), help="Output File")
     args = parser.parse_args()
-    assert args.maxit > 0, "Maximum number of optimization iterations must be positive"
+    assert args.maxit is None or args.maxit > 0, "Maximum number of optimization iterations must be positive"
     return args
 
 # dummy negative likelihood function for optimization (minimization)
@@ -67,9 +67,7 @@ def MLGTR(tree, seqs, maxit=None):
     x = result.x
     pi = {'A':x[0], 'C':x[1], 'G':x[2], 'T':(1-x[0]-x[1]-x[2])}
     R = {'AC':x[3], 'AG':x[4], 'AT':x[5], 'CG':x[6], 'CT':x[7], 'GT':x[8]}
-    ag = R['AG']
-    for key in R:
-        R[key] /= ag
+    normalizeGTR(R)
     return pi,R
 
 # main function

@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Compute the likelihood of a tree given GTR parameters.
 '''
 import argparse, dendropy
-from common import parseFASTA,gtr2matrix,L
+from common import parseFASTA,gtr2matrix,normalizeGTR,L
 
 # parse arguments
 def parseArgs():
@@ -19,6 +19,7 @@ def parseArgs():
     pi, gtr = [[float(i) for i in line.split()] for line in args.gtrparams]
     args.pi = {'A':pi[0], 'C':pi[1], 'G':pi[2], 'T':pi[3]}
     args.gtr = {'CT':gtr[0], 'AT':gtr[1], 'GT':gtr[2], 'AC':gtr[3], 'CG':gtr[4], 'AG':gtr[5]}
+    normalizeGTR(args.gtr)
     return args
 
 # main function

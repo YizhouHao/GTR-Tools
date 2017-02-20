@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Generate sequences on a phylogenetic tree using the GTR model
 '''
 import argparse, dendropy
-from common import genString,gtr2matrix,roll
+from common import genString,gtr2matrix,normalizeGTR,roll
 from scipy.linalg import expm
 try:
     import Queue as Q  # ver. < 3.0
@@ -54,6 +54,7 @@ def parseArgs():
     pi, gtr = [[float(i) for i in line.split()] for line in args.gtrparams]
     args.pi = {'A':pi[0], 'C':pi[1], 'G':pi[2], 'T':pi[3]}
     args.gtr = {'CT':gtr[0], 'AT':gtr[1], 'GT':gtr[2], 'AC':gtr[3], 'CG':gtr[4], 'AG':gtr[5]}
+    normalizeGTR(args.gtr)
     if args.rootseq is None and args.rootseqlen is None:
         print("ERROR: Did not specify a root sequence (-i) nor a root sequence length (-r)")
         exit(-1)

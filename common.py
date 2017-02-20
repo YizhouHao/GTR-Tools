@@ -45,8 +45,15 @@ def roll(die):
 def genString(k, pi):
     return ''.join([roll(pi) for _ in range(k)])
 
+# normalize GTR parameter dictionary such that R_AG has a rate of 1
+def normalizeGTR(gtr):
+    ag = gtr['AG']
+    for key in gtr:
+        gtr[key] /= ag
+
 # convert GTR parameter dictionary and stationary vector to numpy rate matrix (0 = A, 1 = C, 2 = G, 3 = T)
 def gtr2matrix(gtr, pi):
+    normalizeGTR(gtr)
     x1 = float(gtr['AC'])
     x2 = float(gtr['AG'])
     x3 = float(gtr['AT'])
@@ -78,7 +85,9 @@ def gtr2matrix(gtr, pi):
 
 # convert numpy matrix to GTR parameter dictionary (0 = A, 1 = C, 2 = G, 3 = T)
 def matrix2gtr(R):
-    return {'AC':float(R[0][1]), 'AG':float(R[0][2]), 'AT':float(R[0][3]), 'CG':float(R[1][2]), 'CT':float(R[1][3]), 'GT':float(R[2][3])}
+    out = {'AC':float(R[0][1]), 'AG':float(R[0][2]), 'AT':float(R[0][3]), 'CG':float(R[1][2]), 'CT':float(R[1][3]), 'GT':float(R[2][3])}
+    normalizeGTR(out)
+    return out
 
 # compute maximum likelihood of tree given sequence data and GTR parameters
 def L(tree, seqs, pi, R):
