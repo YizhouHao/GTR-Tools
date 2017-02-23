@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Estimate GTR parameters on multiple DNA sequences
 '''
 import argparse, dendropy
-from common import parseFASTA,gtr2matrix,normalizeGTR,L
+from common import parseFASTA,gtr2matrix,matrix2gtr,normalizeGTR,L
 from scipy.optimize import minimize
 import warnings
 warnings.filterwarnings('ignore')
@@ -23,7 +23,7 @@ def parseArgs():
     return args
 
 # dummy negative likelihood function for optimization (minimization)
-# x[0] = pi_A, x[1] = pi_C, x[2] = pi_G, x[3] = R_AC, x[4] = R_AG, x[5] = R_AT, x[6] = R_CG, x[7] = R_CT, x[8] = R_GT
+# x[0] = pi_A, x[1] = pi_C, x[2] = pi_G, x[3] = r_AC, 1 = r_AG (norm), x[4] = r_AT, x[5] = R_CG, x[6] = R_CT, x[7] = R_GT
 def f(x, tree=None, seqs=None):
     assert tree is not None, "tree cannot be None"
     assert seqs is not None, "seqs cannot be None"
@@ -33,11 +33,8 @@ def f(x, tree=None, seqs=None):
     for n in pi:
         if pi[n] <= 0:
             return float('inf')
-    R = {'AC':x[3], 'AG':x[4], 'AT':x[5], 'CG':x[6], 'CT':x[7], 'GT':x[8]}
-    for key in R:
-        if R[key] == 0:
-            return float('inf')
-    return -1*L(tree,seqs,pi,gtr2matrix(R,pi))
+    gtr = {'AC':x[3], 'AG':1, 'AT':x[4], 'CG':x[5], 'CT':x[6], 'GT':x[7]}
+    return -1*L(tree,seqs,pi,gtr2matrix(gtr,pi))
 
 # compute the maximum-likelihood GTR parameters
 def MLGTR(tree, seqs, maxit=None):
@@ -54,21 +51,20 @@ def MLGTR(tree, seqs, maxit=None):
     x0[1] = nucFreqs['C']
     x0[2] = nucFreqs['G']
     # default start for R is Jukes-Cantor
-    x0[3] = 1./3.
-    x0[4] = 1./3.
-    x0[5] = 1./3.
-    x0[6] = 1./3.
-    x0[7] = 1./3.
-    x0[8] = 1./3.
+    x0[3] = 1./(3*nucFreqs['C'])
+    x0[4] = 1./(3*nucFreqs['T'])
+    x0[5] = 1./(3*nucFreqs['G'])
+    x0[6] = 1./(3*nucFreqs['T'])
+    x0[7] = 1./(3*nucFreqs['T'])
     if maxit is None:
         result = minimize(f, x0, bounds=bounds, args=(tree,seqs), method='SLSQP')
     else:
         result = minimize(f, x0, bounds=bounds, args=(tree,seqs), method='SLSQP', options={'maxiter':maxit})
     x = result.x
     pi = {'A':x[0], 'C':x[1], 'G':x[2], 'T':(1-x[0]-x[1]-x[2])}
-    R = {'AC':x[3], 'AG':x[4], 'AT':x[5], 'CG':x[6], 'CT':x[7], 'GT':x[8]}
-    normalizeGTR(R)
-    return pi,R
+    gtr = {'AC':x[3], 'AG':1, 'AT':x[4], 'CG':x[5], 'CT':x[6], 'GT':x[7]}
+    normalizeGTR(gtr)
+    return pi,gtr
 
 # main function
 if __name__ == "__main__":

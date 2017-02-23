@@ -132,7 +132,7 @@ def MLGTR(s, t, bl):
     P[3][3] = (1-x[5]-x[7]-x[8])
     Pmat = matrix(P)
     Rmat = logm(Pmat)/bl
-    R = matrix2gtr(Rmat)
+    R = matrix2gtr(Rmat,pi)
     normalizeGTR(R)
     return pi,R
 
