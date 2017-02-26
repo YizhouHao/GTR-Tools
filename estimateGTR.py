@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Estimate GTR parameters on multiple DNA sequences
 '''
 import argparse, dendropy
-from common import parseFASTA,gtr2matrix,matrix2gtr,normalizeGTR,L
+from common import parseFASTA,gtr2matrix,matrix2gtr,L
 from scipy.optimize import minimize
 import warnings
 warnings.filterwarnings('ignore')
@@ -23,7 +23,7 @@ def parseArgs():
     return args
 
 # dummy negative likelihood function for optimization (minimization)
-# x[0] = pi_A, x[1] = pi_C, x[2] = pi_G, x[3] = r_AC, 1 = r_AG (norm), x[4] = r_AT, x[5] = R_CG, x[6] = R_CT, x[7] = R_GT
+# x[0] = pi_A, x[1] = pi_C, x[2] = pi_G, x[3] = r_AC, x[4] = r_AG,  x[5] = r_AT, x[6] = r_CG, x[7] = r_CT, x[8] = r_GT
 def f(x, tree=None, seqs=None):
     assert tree is not None, "tree cannot be None"
     assert seqs is not None, "seqs cannot be None"
@@ -33,7 +33,7 @@ def f(x, tree=None, seqs=None):
     for n in pi:
         if pi[n] <= 0:
             return float('inf')
-    gtr = {'AC':x[3], 'AG':1, 'AT':x[4], 'CG':x[5], 'CT':x[6], 'GT':x[7]}
+    gtr = {'AC':x[3], 'AG':x[4], 'AT':x[5], 'CG':x[6], 'CT':x[7], 'GT':x[8]}
     return -1*L(tree,seqs,pi,gtr2matrix(gtr,pi))
 
 # compute the maximum-likelihood GTR parameters
@@ -52,18 +52,18 @@ def MLGTR(tree, seqs, maxit=None):
     x0[2] = nucFreqs['G']
     # default start for R is Jukes-Cantor
     x0[3] = 1./(3*nucFreqs['C'])
-    x0[4] = 1./(3*nucFreqs['T'])
-    x0[5] = 1./(3*nucFreqs['G'])
-    x0[6] = 1./(3*nucFreqs['T'])
+    x0[4] = 1./(3*nucFreqs['G'])
+    x0[5] = 1./(3*nucFreqs['T'])
+    x0[6] = 1./(3*nucFreqs['G'])
     x0[7] = 1./(3*nucFreqs['T'])
+    x0[8] = 1./(3*nucFreqs['T'])
     if maxit is None:
         result = minimize(f, x0, bounds=bounds, args=(tree,seqs), method='SLSQP')
     else:
         result = minimize(f, x0, bounds=bounds, args=(tree,seqs), method='SLSQP', options={'maxiter':maxit})
     x = result.x
     pi = {'A':x[0], 'C':x[1], 'G':x[2], 'T':(1-x[0]-x[1]-x[2])}
-    gtr = {'AC':x[3], 'AG':1, 'AT':x[4], 'CG':x[5], 'CT':x[6], 'GT':x[7]}
-    normalizeGTR(gtr)
+    gtr = {'AC':x[3], 'AG':x[4], 'AT':x[5], 'CG':x[6], 'CT':x[7], 'GT':x[8]}
     return pi,gtr
 
 # main function

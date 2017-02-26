@@ -6,7 +6,7 @@ ECE 286 Homework 2
 Estimate GTR parameters from pairs of DNA sequences
 '''
 import argparse
-from common import parseFASTA,matrix2gtr,normalizeGTR
+from common import parseFASTA,matrix2gtr
 from math import log
 from numpy import matrix
 from scipy.linalg import logm
@@ -133,7 +133,6 @@ def MLGTR(s, t, bl):
     Pmat = matrix(P)
     Rmat = logm(Pmat)/bl
     R = matrix2gtr(Rmat,pi)
-    normalizeGTR(R)
     return pi,R
 
 # main function
